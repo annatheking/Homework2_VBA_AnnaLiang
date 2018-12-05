@@ -1,0 +1,128 @@
+Sub total():
+
+For Each ws In Worksheets
+ 
+    Dim i As Long
+    Dim LastRow As Long
+    'Dim ticker_cnt As Long
+    'Dim first_open As Double
+    'Dim last_close As Double
+    'Dim ticker_sum As Long
+    'Dim percent As Double
+    Dim last_ticker_row As Long
+    Dim increase As Double
+    Dim decrease As Double
+    'Dim vol As Long
+    Dim temp_ticker_i As String
+    Dim temp_ticker_d As String
+    Dim temp_ticker_v As String
+        
+    ticker_cnt = 2
+    ticker_sum = 0
+    first_open = ws.Cells(2, 3).Value
+    
+    increase = 0
+    decrease = 0
+    vol = 0
+    
+    LastRow = ws.Cells(Rows.Count, 1).End(xlUp).Row
+    
+    'Lable ticker summary table to be created
+    ws.Range("I1").Value = "Ticker"
+    ws.Range("J1").Value = "Yearly Change"
+    ws.Range("K1").Value = "Percent Change"
+    ws.Range("L1").Value = "Total Stock Volume"
+    
+    'Lable "Greatest" table to be created
+    ws.Range("O2").Value = "Greatest % Increase"
+    ws.Range("O3").Value = "Greatest % Decrease"
+    ws.Range("O4").Value = "Greatest Total Volume"
+    ws.Range("P1").Value = "Ticker"
+    ws.Range("Q1").Value = "Value"
+
+        For i = 2 To LastRow
+        
+        If ws.Cells(i, 1).Value = ws.Cells(i + 1, 1).Value Then
+            'Sum up volumn
+            ticker_sum = ticker_sum + ws.Cells(i + 1, 7).Value
+                    
+        ElseIf ws.Cells(i, 1).Value <> ws.Cells(i + 1, 1).Value Then
+            'Fill in total volume column
+            ws.Cells(ticker_cnt, 12).Value = ticker_sum
+            
+            'Reset volume sum to zero
+            ticker_sum = 0
+            
+            'Calculate first_open and last_close difference
+            last_close = ws.Cells(i, 6).Value
+            ws.Cells(ticker_cnt, 10).Value = last_close - first_open
+            
+            'Calculate percent change between first_open and last_close
+            If first_open <> 0 And last_close <> 0 Then
+                ws.Cells(ticker_cnt, 11).Value = (ws.Cells(ticker_cnt, 10).Value / first_open)
+            ElseIf first_open = 0 And last_close <> 0 Then
+                ws.Cells(ticker_cnt, 11).Value = 1
+            Else
+                ws.Cells(ticker_cnt, 11).Value = 0
+            End If
+            ws.Cells(ticker_cnt, 11).NumberFormat = "0.00%"
+
+            
+            'Unique Ticker Column
+            ws.Cells(ticker_cnt, 9).Value = ws.Cells(i, 1).Value
+            ticker_cnt = ticker_cnt + 1
+
+            'Reset first_open
+            first_open = ws.Cells(i + 1, 3).Value
+            
+        End If
+        
+        Next i
+        
+        'Count rows in ticker table created
+        last_ticker_row = ws.Cells(Rows.Count, 9).End(xlUp).Row
+        
+        ''' Loop the ticker table created
+        For j = 2 To last_ticker_row
+        
+            'Color format +/- change
+            If ws.Cells(j, 10).Value >= 0 Then
+                ws.Cells(j, 10).Interior.ColorIndex = "4"
+            Else
+                ws.Cells(j, 10).Interior.ColorIndex = "3"
+            End If
+            
+            'Find max % increase
+            If ws.Cells(j, 11).Value > increase Then
+                increase = ws.Cells(j, 11).Value
+                temp_ticker_i = ws.Cells(j, 9).Value
+            End If
+            ws.Range("Q2").Value = increase
+            ws.Range("Q2").NumberFormat = "0.00%"
+            ws.Range("P2").Value = temp_ticker_i
+            
+            'Find max % decrease
+            If ws.Cells(j, 11).Value < decrease Then
+                decrease = ws.Cells(j, 11).Value
+                temp_ticker_d = ws.Cells(j, 9).Value
+            End If
+            ws.Range("Q3").Value = decrease
+            ws.Range("Q3").NumberFormat = "0.00%"
+            ws.Range("P3").Value = temp_ticker_d
+            
+            'Find max volume
+            If ws.Cells(j, 12).Value > vol Then
+                vol = ws.Cells(j, 12).Value
+                temp_ticker_v = ws.Cells(j, 9).Value
+            End If
+            ws.Range("Q4").Value = vol
+            ws.Range("P4").Value = temp_ticker_v
+        Next j
+
+    Next ws
+
+End Sub
+
+
+
+
