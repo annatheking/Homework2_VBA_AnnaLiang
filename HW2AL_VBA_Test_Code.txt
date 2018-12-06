@@ -4,15 +4,15 @@ For Each ws In Worksheets
  
     Dim i As Long
     Dim LastRow As Long
-    'Dim ticker_cnt As Long
-    'Dim first_open As Double
-    'Dim last_close As Double
-    'Dim ticker_sum As Long
-    'Dim percent As Double
+    Dim ticker_cnt As Variant
+    Dim first_open As Double
+    Dim last_close As Double
+    Dim ticker_sum As Variant
+    Dim percent As Double
     Dim last_ticker_row As Long
     Dim increase As Double
     Dim decrease As Double
-    'Dim vol As Long
+    Dim vol As Variant
     Dim temp_ticker_i As String
     Dim temp_ticker_d As String
     Dim temp_ticker_v As String
@@ -122,6 +122,7 @@ For Each ws In Worksheets
     Next ws
 
 End Sub
+
 
 
 
